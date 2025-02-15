@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // ✅ CORS Middleware
 app.use(
   cors({
-    origin: "test-project-dun-three.vercel.app", // Allow only your frontend URL
+    origin: "test-project-dun-three.vercel.app",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
