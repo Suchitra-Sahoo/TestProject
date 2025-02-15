@@ -16,7 +16,7 @@ const RegistrationForm = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,8 +29,8 @@ const RegistrationForm = () => {
     } catch (error) {
       console.error("Error registering user:", error);
     }
-  };  
-
+  };
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
