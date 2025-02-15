@@ -6,17 +6,24 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({ origin: "*", methods: ["GET", "POST"], allowedHeaders: ["Content-Type"] }));
+// ✅ CORS Middleware
+app.use(
+  cors({
+    origin: "test-project-dun-three.vercel.app", // Allow only your frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
-// Connect to MongoDB
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);
-    process.exit(1); // Exit if connection fails
+    process.exit(1);
   });
 
 // Define User Schema
@@ -32,16 +39,26 @@ const User = mongoose.model("User", userSchema);
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ error: "Email already exists" });
+    }
+
     const newUser = new User({ name, email, password });
     await newUser.save();
-    
+
     res.status(201).json({ message: "User registered successfully!" });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Registration Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 // Start Server
-app.listen(PORT, "0.0.0.0", () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

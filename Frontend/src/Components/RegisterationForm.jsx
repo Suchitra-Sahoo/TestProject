@@ -14,7 +14,8 @@ const RegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    console.log("Submitting Data:", formData); // Debugging
+  
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
         method: "POST",
@@ -24,10 +25,16 @@ const RegistrationForm = () => {
         body: JSON.stringify(formData),
       });
   
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to register");
+      }
+  
       const data = await response.json();
       alert(data.message);
     } catch (error) {
-      console.error("Error registering user:", error);
+      console.error("❌ Error registering user:", error.message);
+      alert(error.message);
     }
   };
   
