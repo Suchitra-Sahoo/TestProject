@@ -7,13 +7,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ✅ CORS Middleware
+const allowedOrigins = [
+  "https://test-project-70fjexx4x-suchitra-sahoos-projects.vercel.app", // ✅ Your correct frontend URL
+  "https://test-project-dun-three.vercel.app" // ✅ Add any other Vercel frontend if needed
+];
+
 app.use(
   cors({
-    origin: "test-project-dun-three.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 app.use(express.json());
 
